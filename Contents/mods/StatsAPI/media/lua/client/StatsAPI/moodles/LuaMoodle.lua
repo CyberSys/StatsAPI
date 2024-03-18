@@ -32,7 +32,7 @@ LuaMoodle.colourPositive = {0.15686275, 0.88235295, 0.15686275, 1}
 ---@param template MoodleTemplate
 ---@param parent LuaMoodles
 LuaMoodle.new = function(self, x, y, template, parent)
-    local o = ISUIElement:new(x, y, 32 * parent.scale, 32 * parent.scale)
+    local o = ISUIElement:new(x, y, template.texture:getWidth() * parent.scale, template.texture:getHeight() * parent.scale)
     setmetatable(o, self)
     
     o.baseY = y
@@ -92,9 +92,8 @@ end
 
 ---@param self LuaMoodle
 LuaMoodle.updateHeightWidth = function(self)
-    local size = 32 * self.parent.scale
-    self:setWidth(size)
-    self:setHeight(size)
+    self:setWidth(self.texture:getWidth() * self.parent.scale)
+    self:setHeight(self.texture:getHeight() * self.parent.scale)
 end
 
 ---@param self LuaMoodle
