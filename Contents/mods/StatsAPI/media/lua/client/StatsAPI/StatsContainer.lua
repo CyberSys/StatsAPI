@@ -14,7 +14,6 @@ local Math = require("StatsAPI/lib/Math")
 ---@field bodyDamage BodyDamage
 local StatsContainer = {}
 
----@param self StatsContainer
 ---@param javaStats Stats
 ---@param bodyDamage BodyDamage
 StatsContainer.new = function(self, javaStats, bodyDamage)
@@ -35,7 +34,6 @@ StatsContainer.new = function(self, javaStats, bodyDamage)
     return o
 end
 
----@param self StatsContainer
 StatsContainer.fromJava = function(self)
     self.stress = self.javaStats.stress
     self.endurance = self.javaStats:getEndurance()
@@ -48,7 +46,6 @@ StatsContainer.fromJava = function(self)
     self.sadness = self.bodyDamage:getUnhappynessLevel()
 end
 
----@param self StatsContainer
 StatsContainer.toJava = function(self)
     self.javaStats:setStress(Math.clamp(self.stress, 0, 1))
     self.javaStats:setEndurance(Math.clamp(self.endurance, 0, 1))

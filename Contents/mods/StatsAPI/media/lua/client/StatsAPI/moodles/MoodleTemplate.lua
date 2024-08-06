@@ -27,7 +27,6 @@ MoodleTemplate.Backgrounds = {
     }
 }
 
----@param self MoodleTemplate
 ---@param type string
 ---@param texture Texture
 ---@param backgrounds Texture[]

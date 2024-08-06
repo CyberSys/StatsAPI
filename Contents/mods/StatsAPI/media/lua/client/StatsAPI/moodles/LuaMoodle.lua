@@ -26,7 +26,6 @@ LuaMoodle.oscillatorStep = 0
 LuaMoodle.colourNegative = {0.88235295, 0.15686275, 0.15686275, 1}
 LuaMoodle.colourPositive = {0.15686275, 0.88235295, 0.15686275, 1}
 
----@param self LuaMoodle
 ---@param x number
 ---@param y number
 ---@param template MoodleTemplate
@@ -52,19 +51,16 @@ LuaMoodle.new = function(self, x, y, template, parent)
     return o
 end
 
----@param self LuaMoodle
 LuaMoodle.show = function(self)
     self:addToUIManager()
     self.parent:showMoodle(self)
 end
 
----@param self LuaMoodle
 LuaMoodle.hide = function(self)
     self:removeFromUIManager()
     self.parent:hideMoodle(self)
 end
 
----@param self LuaMoodle
 ---@param level int
 LuaMoodle.setLevel = function(self, level)
     if level == self.level then return end
@@ -84,19 +80,16 @@ LuaMoodle.setLevel = function(self, level)
     self.level = level
 end
 
----@param self LuaMoodle
 ---@param renderIndex int
 LuaMoodle.setRenderIndex = function(self, renderIndex)
     self:setY(self.baseY + self.parent.spacing * self.parent.scale * (renderIndex - 1))
 end
 
----@param self LuaMoodle
 LuaMoodle.updateHeightWidth = function(self)
     self:setWidth(self.texture:getWidth() * self.parent.scale)
     self:setHeight(self.texture:getHeight() * self.parent.scale)
 end
 
----@param self LuaMoodle
 LuaMoodle.updateOscillationLevel = function(self)
     if self.oscillationLevel > 0 then
         self.oscillationLevel = self.oscillationLevel - self.oscillationLevel * 0.04 / Globals.FPSMultiplier
@@ -106,7 +99,6 @@ LuaMoodle.updateOscillationLevel = function(self)
     end
 end
 
----@param self LuaMoodle
 LuaMoodle.render = function(self)
     local x = LuaMoodle.oscillator * self.oscillationLevel * self.parent.scale
     
@@ -134,12 +126,10 @@ LuaMoodle.render = function(self)
     end
 end
 
----@param self LuaMoodle
 LuaMoodle.wiggle = function(self)
     self.oscillationLevel = 1
 end
 
----@param self LuaMoodle
 LuaMoodle.cleanup = function(self)
     self:removeFromUIManager()
     if self.javaObject then

@@ -67,7 +67,6 @@ CharacterStats.__index = function(self, key)
     return CharacterStats[key]
 end
 
----@param self CharacterStats
 ---@param key any
 ---@param value any
 CharacterStats.__newindex = function(self, key, value)
@@ -79,7 +78,6 @@ CharacterStats.__newindex = function(self, key, value)
 end
 
 ---@private
----@param self CharacterStats
 ---@param character IsoPlayer
 ---@return CharacterStats
 CharacterStats.new = function(self, character)
@@ -116,7 +114,6 @@ CharacterStats.getIdleBoredom = Boredom.getIdleBoredom
 CharacterStats.updateSadness = Sadness.updateSadness
 CharacterStats.updateCarryWeight = CarryWeight.updateCarryWeight
 
----@param self CharacterStats
 CharacterStats.updateEndurance = function(self)
     if self.character:isUnlimitedEndurance() then
         self.stats.endurance = 1
@@ -132,12 +129,10 @@ CharacterStats.updateEndurance = function(self)
     end
 end
 
----@param self CharacterStats
 CharacterStats.updateFitness = function(self)
     self.javaStats:setFitness(self.character:getPerkLevel(Perks.Fitness) / 5 - 1)
 end
 
----@param self CharacterStats
 CharacterStats.updateCache = function(self)
     self.asleep = self.character:isAsleep()
     self.vehicle = self.character:getVehicle()
@@ -146,7 +141,6 @@ CharacterStats.updateCache = function(self)
     self.temperature = self.bodyDamage:getTemperature()
 end
 
----@param self CharacterStats
 CharacterStats.refreshTraits = function(self)
     self.maxWeightDelta = CarryWeight.getMaxWeightDelta(self.character)
     self.panicMultiplier = Panic.getTraitMultiplier(self.character)
@@ -156,7 +150,6 @@ CharacterStats.refreshTraits = function(self)
     self.fatigueMultiplierAwake, self.fatigueMultiplierAsleep = Fatigue.getFatigueRates(self.character)
 end
 
----@param self CharacterStats
 CharacterStats.CalculateStats = function(self)
     self.stats:fromJava()
     
@@ -215,7 +208,7 @@ CharacterStats.moodleThresholds = {
     windchill = {5, 10, 15, 20},
     hyperthermia = {37.5, 39, 40, 41}
 }
----@param self CharacterStats
+
 CharacterStats.updateMoodles = function(self)
     -- TODO: ugh
     local stats = {stress = self.stats.stress + self.javaStats:getStressFromCigarettes(), foodeaten = self.bodyDamage:getHealthFromFoodTimer(), endurance = 1 - self.stats.endurance,
@@ -248,7 +241,6 @@ CharacterStats.updateMoodles = function(self)
     self:updateTemperatureMoodles()
 end
 
----@param self CharacterStats
 CharacterStats.updateTemperatureMoodles = function(self)
     local drunkenness = self.javaStats:getDrunkenness()
     local hypothermia = self.luaMoodles.moodles.hypothermia
@@ -282,7 +274,6 @@ CharacterStats.updateTemperatureMoodles = function(self)
     end
 end
 
----@param self CharacterStats
 CharacterStats.applyOverTimeEffects = function(self)
     for j = 1, #self.overTimeEffects do
         local effect = self.overTimeEffects[j]
@@ -296,7 +287,6 @@ CharacterStats.applyOverTimeEffects = function(self)
     end
 end
 
----@param self CharacterStats
 ---@param moodle string
 ---@return int
 ---@see LuaMoodles#getMoodleLevel
