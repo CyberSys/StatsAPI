@@ -285,7 +285,7 @@ StatsAPI.addMoodle = function(moodleType, icon, levels, positive, translationId,
         end
     end
     
-    MoodleTemplate:new(moodleType, icon, backgrounds, translations)
+    MoodleTemplate.new(moodleType, icon, backgrounds, translations)
 end
 
 ---Sets the level of a player's moodle.

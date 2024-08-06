@@ -16,21 +16,22 @@ LuaMoodles.topOffset = 100
 
 ---@private
 ---@param stats CharacterStats
-LuaMoodles.new = function(self, stats)
+---@return LuaMoodles
+LuaMoodles.new = function(stats)
     local o = {}
-    setmetatable(o, self)
-    
+    setmetatable(o, LuaMoodles)
+
     o.stats = stats
     o.playerNum = stats.playerNum
-    
+
     o.showingMoodles = {}
     o.moodles = {}
     for i = 1, #MoodleTemplate.templates do
         local template = MoodleTemplate.templates[i]
-        local moodle = LuaMoodle:new(0, 0, template, o) -- position will be overriden by adjustPosition anyway
+        local moodle = LuaMoodle.new(0, 0, template, o) -- position will be overriden by adjustPosition anyway
         o.moodles[template.type] = moodle
     end
-    
+
     return o
 end
 
@@ -78,7 +79,7 @@ end
 ---@param stats CharacterStats
 ---@return LuaMoodles
 LuaMoodles.create = function(stats)
-    local moodles = LuaMoodles:new(stats)
+    local moodles = LuaMoodles.new(stats)
     LuaMoodles.instanceMap[stats.playerNum] = moodles
     LuaMoodles.adjustPositions()
     return moodles

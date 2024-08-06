@@ -16,10 +16,11 @@ local StatsContainer = {}
 
 ---@param javaStats Stats
 ---@param bodyDamage BodyDamage
-StatsContainer.new = function(self, javaStats, bodyDamage)
+---@return StatsContainer
+StatsContainer.new = function(javaStats, bodyDamage)
     local o = {}
-    setmetatable(o, self)
-    
+    setmetatable(o, StatsContainer)
+
     o.javaStats = javaStats
     o.bodyDamage = bodyDamage
     o.stress = 0
@@ -30,7 +31,7 @@ StatsContainer.new = function(self, javaStats, bodyDamage)
     o.panic = 0
     o.boredom = 0
     o.sadness = 0
-    
+
     return o
 end
 

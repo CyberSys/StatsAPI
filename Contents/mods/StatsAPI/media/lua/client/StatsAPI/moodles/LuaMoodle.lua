@@ -30,25 +30,26 @@ LuaMoodle.colourPositive = {0.15686275, 0.88235295, 0.15686275, 1}
 ---@param y number
 ---@param template MoodleTemplate
 ---@param parent LuaMoodles
-LuaMoodle.new = function(self, x, y, template, parent)
+LuaMoodle.new = function(x, y, template, parent)
     local o = ISUIElement:new(x, y, template.texture:getWidth() * parent.scale, template.texture:getHeight() * parent.scale)
-    
-    setmetatable(o, self)
+
+    setmetatable(o, LuaMoodle)
     ---@cast o LuaMoodle
+
     o.baseY = y
     o.template = template
     o.texture = template.texture
     o.backgrounds = template.backgrounds
     o.parent = parent
-    
+
     o.level = 0
     o.chevronCount = 0
     o.chevronUp = true
     o.chevronPositive = true
-    
+
     o.renderIndex = 1
     o.oscillationLevel = 0
-    
+
     return o
 end
 

@@ -80,26 +80,26 @@ end
 ---@private
 ---@param character IsoPlayer
 ---@return CharacterStats
-CharacterStats.new = function(self, character)
+CharacterStats.new = function(character)
     local o = {}
-    setmetatable(o, self)
+    setmetatable(o, CharacterStats)
     ---@cast o CharacterStats
-    
+
     o.character = character
     o.playerNum = character:getPlayerNum()
     o.bodyDamage = character:getBodyDamage()
     o.moodles = character:getMoodles()
     o.javaStats = character:getStats()
     o.thermoregulator = o.bodyDamage:getThermoregulator()
-    o.stats = StatsContainer:new(o.javaStats, o.bodyDamage)
-    
+    o.stats = StatsContainer.new(o.javaStats, o.bodyDamage)
+
     local modData = character:getModData()
     modData.StatsAPI = modData.StatsAPI or {}
     modData.StatsAPI.StatsData = modData.StatsAPI.StatsData or {}
     o.modData = modData.StatsAPI.StatsData
-    
+
     o.modData.overTimeEffects = o.modData.overTimeEffects or {}
-    
+
     return o
 end
 
@@ -300,7 +300,7 @@ CharacterStats.CharacterStatsMap = {}
 ---@param character IsoGameCharacter
 ---@return CharacterStats
 CharacterStats.create = function(character)
-    local stats = CharacterStats:new(character)
+    local stats = CharacterStats.new(character)
     CharacterStats.CharacterStatsMap[character] = stats
     return stats
 end
@@ -310,7 +310,7 @@ end
 CharacterStats.getOrCreate = function(character)
     local stats = CharacterStats.CharacterStatsMap[character]
     if not stats then
-        stats = CharacterStats:new(character)
+        stats = CharacterStats.new(character)
         CharacterStats.CharacterStatsMap[character] = stats
     end
     return stats
