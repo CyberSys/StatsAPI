@@ -81,9 +81,9 @@ end
 ---@param character IsoPlayer
 ---@return CharacterStats
 CharacterStats.new = function(self, character)
-    ---@type CharacterStats
     local o = {}
     setmetatable(o, self)
+    ---@cast o CharacterStats
     
     o.character = character
     o.playerNum = character:getPlayerNum()
@@ -289,7 +289,7 @@ end
 
 ---@param moodle string
 ---@return int
----@see LuaMoodles#getMoodleLevel
+---@see LuaMoodles.getMoodleLevel
 CharacterStats.getMoodleLevel = function(self, moodle)
     return self.luaMoodles:getMoodleLevel(moodle)
 end

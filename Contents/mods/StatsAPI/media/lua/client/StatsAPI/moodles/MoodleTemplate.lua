@@ -34,6 +34,7 @@ MoodleTemplate.Backgrounds = {
 MoodleTemplate.new = function(self, type, texture, backgrounds, text)
     local o = {}
     setmetatable(o, self)
+    ---@cast o MoodleTemplate
 
     o.type = type
     o.texture = texture

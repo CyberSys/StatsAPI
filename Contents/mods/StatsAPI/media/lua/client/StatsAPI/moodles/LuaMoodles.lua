@@ -76,6 +76,7 @@ LuaMoodles.getMoodleLevel = function(self, moodle)
 end
 
 ---@param stats CharacterStats
+---@return LuaMoodles
 LuaMoodles.create = function(stats)
     local moodles = LuaMoodles:new(stats)
     LuaMoodles.instanceMap[stats.playerNum] = moodles
