@@ -24,6 +24,7 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field thermoregulator Thermoregulator The character's Thermoregulator object
 ---@field luaMoodles LuaMoodles The character's LuaMoodles object
 ---@field tickCount int How many times this character's stats have been updated
+---@field private modData table Mod data table to store persistent data in
 ---
 ---@field maxWeightDelta number The character's carry weight multiplier from traits
 ---@field panicMultiplier number The character's panic multiplier from traits
