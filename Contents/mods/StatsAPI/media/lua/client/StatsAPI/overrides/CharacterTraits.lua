@@ -18,19 +18,16 @@ local refreshTraits = function(traits)
 end
 
 local old_add = traitCollection.add
----@generic o
----@param self TraitCollection
----@param trait o
+
 traitCollection.add = function(self, trait)
     old_add(self, trait)
     refreshTraits(self)
 end
 
 local old_remove = traitCollection.remove
----@generic o
----@param self TraitCollection
----@param trait o
+
 traitCollection.remove = function(self, trait)
-    old_remove(self, trait)
+    local ret = old_remove(self, trait)
     refreshTraits(self)
+    return ret
 end
