@@ -44,7 +44,7 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field wellFed boolean Does the character have a food buff active?
 ---@field carryWeight number The character's current maximum carry weight
 ---@field temperature number The character's current temperature
----@field vehicle BaseVehicle|nil The character's current vehicle
+---@field vehicle BaseVehicle? The character's current vehicle
 ---@field reading boolean Is the character currently reading?
 ---@field overTimeEffects OverTimeEffect[] The character's active OverTimeEffects
 local CharacterStats = {}
@@ -58,7 +58,7 @@ CharacterStats.staticCarryMod = 0
 CharacterStats.tickCount = 0
 
 CharacterStats.persistentStats = {forceWakeUpTime = true, overTimeEffects = true}
----@param self CharacterStats
+
 ---@param key any
 CharacterStats.__index = function(self, key)
     if CharacterStats.persistentStats[key] then
@@ -317,7 +317,7 @@ CharacterStats.getOrCreate = function(character)
 end
 
 ---@param character IsoGameCharacter
----@return CharacterStats|nil
+---@return CharacterStats?
 CharacterStats.get = function(character)
     return CharacterStats.CharacterStatsMap[character]
 end

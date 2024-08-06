@@ -259,10 +259,10 @@ local moodleDesc = "Moodles_%s_desc_lvl%d"
 ---Adds a new moodle. The new moodle will not be added retroactively to existing players, so this should be used before gameplay starts.
 ---@param moodleType string Identifier for the moodle. Also used in determining the translation string for its names
 ---@param icon Texture|string Icon for the moodle.
----@param levels int|nil How many levels the moodle should have. (Default: 4)
----@param positive boolean|nil Whether the moodle is a positive moodle. (Changes the background sprite, defaults to false)
----@param translationId string|nil Identifier for the moodle's translations, if it is different to moodleType
----@param descIdentifier string|nil Identifier for the moodle's description translations, if it is different to moodleType *and* translationId
+---@param levels? int How many levels the moodle should have. (Default: 4)
+---@param positive? boolean Whether the moodle is a positive moodle. (Changes the background sprite, defaults to false)
+---@param translationId? string Identifier for the moodle's translations, if it is different to moodleType
+---@param descIdentifier? string Identifier for the moodle's description translations, if it is different to moodleType *and* translationId
 StatsAPI.addMoodle = function(moodleType, icon, levels, positive, translationId, descIdentifier)
     if type(icon) == "string" then
         icon = getTexture(icon)
@@ -314,8 +314,8 @@ end
 ---@param player IsoPlayer The player whose moodle to change.
 ---@param moodleType string The type of moodle to change.
 ---@param numChevrons int The amount of chevrons to display.
----@param down boolean|nil Should the chevron point down? Defaults to no change (false if unset)
----@param positive boolean|nil Changes the colour of the chevron based on whether it's a positive or negative change. Defaults to no change (true if unset)
+---@param down? boolean Should the chevron point down? Defaults to no change (false if unset)
+---@param positive? boolean Changes the colour of the chevron based on whether it's a positive or negative change. Defaults to no change (true if unset)
 StatsAPI.setMoodleChevron = function(player, moodleType, numChevrons, down, positive)
     local moodle = CharacterStats.get(player).luaMoodles.moodles[moodleType]
     moodle.chevronCount = numChevrons
