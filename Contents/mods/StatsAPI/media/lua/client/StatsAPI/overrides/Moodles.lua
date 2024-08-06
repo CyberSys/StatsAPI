@@ -31,8 +31,6 @@ local moodleTypeToLuaMoodle = {
 local moodles = __classmetatables[Moodles.class].__index
 
 local old_getMoodleLevel = moodles.getMoodleLevel
----@param self Moodles
----@param moodleType MoodleType|int
 moodles.getMoodleLevel = function(self, moodleType)
     local luaType = moodleTypeToLuaMoodle[moodleType]
     if not luaType then
@@ -44,4 +42,5 @@ moodles.getMoodleLevel = function(self, moodleType)
             return stats.luaMoodles.moodles[luaType].level
         end
     end
+    return 0
 end
