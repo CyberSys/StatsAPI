@@ -11,7 +11,7 @@ local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), get
 ---@field baseY number
 ---@field template MoodleTemplate
 ---@field texture Texture
----@field backgrounds table<Texture>
+---@field backgrounds Texture[]
 ---@field level int
 ---@field renderIndex int
 ---@field parent LuaMoodles

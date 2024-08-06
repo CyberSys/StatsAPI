@@ -45,7 +45,7 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field temperature number The character's current temperature
 ---@field vehicle BaseVehicle|nil The character's current vehicle
 ---@field reading boolean Is the character currently reading?
----@field overTimeEffects table<int, OverTimeEffect> The character's active OverTimeEffects
+---@field overTimeEffects OverTimeEffect[] The character's active OverTimeEffects
 local CharacterStats = {}
 CharacterStats.panicIncrease = 7
 CharacterStats.panicReduction = 0.06

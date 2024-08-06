@@ -5,9 +5,9 @@ local LuaMoodle = require "StatsAPI/moodles/LuaMoodle"
 ---@field playerNum int
 ---@field stats CharacterStats
 ---@field moodles table<string, LuaMoodle>
----@field showingMoodles table<LuaMoodle>
+---@field showingMoodles LuaMoodle[]
 local LuaMoodles = {}
----@type table<LuaMoodles>
+---@type LuaMoodles[]
 LuaMoodles.instanceMap = {}
 LuaMoodles.scale = 1
 LuaMoodles.spacing = 36
@@ -27,7 +27,6 @@ LuaMoodles.new = function(self, stats)
     o.showingMoodles = {}
     o.moodles = {}
     for i = 1, #MoodleTemplate.templates do
-        ---@type MoodleTemplate
         local template = MoodleTemplate.templates[i]
         local moodle = LuaMoodle:new(0, 0, template, o) -- position will be overriden by adjustPosition anyway
         o.moodles[template.type] = moodle
@@ -92,7 +91,6 @@ end
 
 LuaMoodles.adjustPositions = function()
     for i = 0, 3 do
-        ---@type LuaMoodles
         local instance = LuaMoodles.instanceMap[i]
         if instance then
             instance:adjustPosition()
@@ -134,7 +132,6 @@ Events.OnGameStart.Add(LuaMoodles.disableVanillaMoodles)
 
 Events.OnTickEvenPaused.Add(function()
     for i = 0, 3 do
-        ---@type LuaMoodles
         local moodles = LuaMoodles.instanceMap[i]
         if moodles then
             for j = 1, #moodles.showingMoodles do

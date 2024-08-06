@@ -1,12 +1,16 @@
 local Moodles = require("StatsAPI/Globals").Moodles
 
+---@class MoodleTranslation
+---@field name string
+---@field desc string
+
 ---@class MoodleTemplate
 ---@field type string
 ---@field texture Texture
----@field text table<int<string,string>>
----@field backgrounds table<int,string>
+---@field text MoodleTranslation[]
+---@field backgrounds Texture[]
 local MoodleTemplate = {}
----@type table<MoodleTemplate>
+---@type MoodleTemplate[]
 MoodleTemplate.templates = {}
 MoodleTemplate.Backgrounds = {
     Positive = {
@@ -26,7 +30,7 @@ MoodleTemplate.Backgrounds = {
 ---@param self MoodleTemplate
 ---@param type string
 ---@param texture Texture
----@param backgrounds table<Texture>
+---@param backgrounds Texture[]
 ---@param text table<table<string, string>>
 MoodleTemplate.new = function(self, type, texture, backgrounds, text)
     local o = {}
