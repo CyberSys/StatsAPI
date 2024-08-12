@@ -17,13 +17,13 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field stats StatsContainer The character's stats
 ---
 ---@field character IsoGameCharacter The character this StatsData belongs to
----@field playerNum int The character's playerNum
+---@field playerNum integer The character's playerNum
 ---@field bodyDamage BodyDamage The character's BodyDamage object
 ---@field javaStats Stats The character's Stats object
 ---@field moodles Moodles The character's Moodles object
 ---@field thermoregulator Thermoregulator The character's Thermoregulator object
 ---@field luaMoodles LuaMoodles The character's LuaMoodles object
----@field tickCount int How many times this character's stats have been updated
+---@field tickCount integer How many times this character's stats have been updated
 ---@field private modData table Mod data table to store persistent data in
 ---
 ---@field maxWeightDelta number The character's carry weight multiplier from traits
@@ -119,7 +119,7 @@ CharacterStats.updateEndurance = function(self)
         self.stats.endurance = 1
         return
     end
-    
+
     if self.asleep then
         local enduranceMultiplier = 2
         if IsoPlayer.allPlayersAsleep() then
@@ -288,7 +288,7 @@ CharacterStats.applyOverTimeEffects = function(self)
 end
 
 ---@param moodle string
----@return int
+---@return integer
 ---@see LuaMoodles.getMoodleLevel
 CharacterStats.getMoodleLevel = function(self, moodle)
     return self.luaMoodles:getMoodleLevel(moodle)
@@ -317,7 +317,7 @@ CharacterStats.getOrCreate = function(character)
 end
 
 ---@param character IsoGameCharacter
----@return CharacterStats?
+---@return CharacterStats
 CharacterStats.get = function(character)
     return CharacterStats.CharacterStatsMap[character]
 end
@@ -333,7 +333,7 @@ end
 
 Hook.CalculateStats.Add(CharacterStats.OnCalculateStats)
 
----@param playerIndex int
+---@param playerIndex integer
 ---@param player IsoPlayer
 CharacterStats.preparePlayer = function(playerIndex, player)
     if LuaMoodles.instanceMap[playerIndex] then

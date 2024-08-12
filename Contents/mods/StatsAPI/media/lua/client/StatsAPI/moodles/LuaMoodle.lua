@@ -12,8 +12,7 @@ local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), get
 ---@field template MoodleTemplate
 ---@field texture Texture
 ---@field backgrounds Texture[]
----@field level int
----@field renderIndex int
+---@field level integer
 ---@field parent LuaMoodles
 ---@field oscillationLevel number
 ---@field chevronCount number
@@ -63,7 +62,7 @@ LuaMoodle.hide = function(self)
     self.parent:hideMoodle(self)
 end
 
----@param level int
+---@param level integer
 LuaMoodle.setLevel = function(self, level)
     if level == self.level then return end
     
@@ -82,7 +81,7 @@ LuaMoodle.setLevel = function(self, level)
     self.level = level
 end
 
----@param renderIndex int
+---@param renderIndex integer
 LuaMoodle.setRenderIndex = function(self, renderIndex)
     self:setY(self.baseY + self.parent.spacing * self.parent.scale * (renderIndex - 1))
 end

@@ -30,12 +30,10 @@ end
 
 Events.OnGameBoot.Add(VanillaMoodles.addMoodles)
 
----@param attacker IsoGameCharacter
----@param weapon HandWeapon
----@param target IsoMovingObject
----@param damage number
+---@type Callback_OnWeaponHitXp
 VanillaMoodles.onWeaponHit = function(attacker, weapon, target, damage)
     if not attacker:isLocal() then return end
+    ---@cast attacker IsoPlayer
     local parts
     if attacker:isAimAtFloor() and attacker:isDoShove() then
         parts = {BodyPartType.UpperLeg_L, BodyPartType.LowerLeg_L, BodyPartType.Foot_L,

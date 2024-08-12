@@ -12,6 +12,7 @@ local Moodles = require("StatsAPI/Globals").Moodles
 local MoodleTemplate = {}
 ---@type MoodleTemplate[]
 MoodleTemplate.templates = {}
+---@type table<string, Texture[]>
 MoodleTemplate.Backgrounds = {
     Positive = {
         getTexture("media/ui/Moodles/Moodle_Bkg_Good_1.png"),
@@ -33,14 +34,14 @@ MoodleTemplate.Backgrounds = {
 ---@param text table<table<string, string>>
 ---@return MoodleTemplate
 MoodleTemplate.new = function(type, texture, backgrounds, text)
-    local o = {}
+    ---@type MoodleTemplate
+    local o = {
+        type = type,
+        texture = texture,
+        backgrounds = backgrounds,
+        text = text
+    }
     setmetatable(o, MoodleTemplate)
-    ---@cast o MoodleTemplate
-
-    o.type = type
-    o.texture = texture
-    o.backgrounds = backgrounds
-    o.text = text
 
     table.insert(MoodleTemplate.templates, o)
     return o

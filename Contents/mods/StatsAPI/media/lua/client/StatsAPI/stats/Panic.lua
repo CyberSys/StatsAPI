@@ -61,7 +61,7 @@ Panic.updatePanic = function(self)
 end
 
 ---@param self CharacterStats
----@param zombies int
+---@param zombies integer
 Panic.increasePanic = function(self, zombies)
     self.stats.panic = self.stats.panic + self.panicIncrease * Panic.getPanicMultiplier(self.character) * zombies * self.panicMultiplier
 end

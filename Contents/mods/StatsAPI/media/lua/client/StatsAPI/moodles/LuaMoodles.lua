@@ -2,7 +2,7 @@ local MoodleTemplate = require "StatsAPI/moodles/MoodleTemplate"
 local LuaMoodle = require "StatsAPI/moodles/LuaMoodle"
 
 ---@class LuaMoodles
----@field playerNum int
+---@field playerNum integer
 ---@field stats CharacterStats
 ---@field moodles table<string, LuaMoodle>
 ---@field showingMoodles LuaMoodle[]
@@ -24,7 +24,7 @@ LuaMoodles.new = function(stats)
     o.stats = stats
     o.playerNum = stats.playerNum
 
-    o.showingMoodles = {}
+    o.showingMoodles = table.newarray()
     o.moodles = {}
     for i = 1, #MoodleTemplate.templates do
         local template = MoodleTemplate.templates[i]
@@ -61,7 +61,7 @@ end
 LuaMoodles.adjustPosition = function(self)
     local x = getPlayerScreenLeft(self.playerNum) + getPlayerScreenWidth(self.playerNum) - LuaMoodles.rightOffset - 32 * self.scale
     local y = getPlayerScreenTop(self.playerNum) + LuaMoodles.topOffset
-    
+
     for _, moodle in pairs(self.moodles) do
         moodle:setX(x)
         moodle.baseY = y
@@ -71,7 +71,7 @@ LuaMoodles.adjustPosition = function(self)
 end
 
 ---@param moodle string
----@return int
+---@return integer
 LuaMoodles.getMoodleLevel = function(self, moodle)
     return self.moodles[moodle].level
 end
