@@ -18,6 +18,7 @@ local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), get
 ---@field chevronCount number
 ---@field chevronUp boolean
 ---@field chevronPositive boolean
+---@field private _showing boolean
 local LuaMoodle = ISUIElement:derive("LuaMoodle")
 LuaMoodle.oscillator = 0
 LuaMoodle.oscillatorStep = 0
@@ -40,24 +41,28 @@ LuaMoodle.new = function(x, y, template, parent)
     o.texture = template.texture
     o.backgrounds = template.backgrounds
     o.parent = parent
+    o._showing = false
 
     o.level = 0
     o.chevronCount = 0
     o.chevronUp = true
     o.chevronPositive = true
 
-    o.renderIndex = 1
     o.oscillationLevel = 0
 
     return o
 end
 
 LuaMoodle.show = function(self)
+    if self._showing then return end
+    self._showing = true
     self:addToUIManager()
     self.parent:showMoodle(self)
 end
 
 LuaMoodle.hide = function(self)
+    if not self._showing then return end
+    self._showing = false
     self:removeFromUIManager()
     self.parent:hideMoodle(self)
 end
@@ -65,9 +70,8 @@ end
 ---@param level integer
 LuaMoodle.setLevel = function(self, level)
     if level == self.level then return end
-    
-    local showing = self.level > 0
-    if not showing then
+
+    if not self._showing then
         if level > 0 then
             self:show()
         end
@@ -102,10 +106,10 @@ end
 
 LuaMoodle.render = function(self)
     local x = LuaMoodle.oscillator * self.oscillationLevel * self.parent.scale
-    
+
     self:drawTextureScaledUniform(self.backgrounds[self.level] or self.backgrounds[1], x, 0, self.parent.scale, 1, 1, 1, 1)
     self:drawTextureScaledUniform(self.texture, x, 0, self.parent.scale, 1, 1, 1, 1)
-    
+
     if self.chevronCount > 0 then
         local tex = chevronTextures[self.chevronUp and "up" or "down"]
         local r, g, b, a = unpack(self.chevronPositive and LuaMoodle.colourPositive or LuaMoodle.colourNegative)
@@ -115,7 +119,7 @@ LuaMoodle.render = function(self)
             self:drawTextureScaledUniform(tex[2], x + 16 * self.parent.scale, y, self.parent.scale, a, r, g, b)
         end
     end
-    
+
     if self:isMouseOver() then
         local translation = self.template.text[self.level] or self.template.text[1]
         local name = translation.name
