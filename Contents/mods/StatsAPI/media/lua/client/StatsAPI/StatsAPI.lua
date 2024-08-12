@@ -266,11 +266,14 @@ local moodleDesc = "Moodles_%s_desc_lvl%d"
 StatsAPI.addMoodle = function(moodleType, icon, levels, positive, translationId, descIdentifier)
     if type(icon) == "string" then
         icon = getTexture(icon)
+        if not icon then
+            print("StatsAPI: Could not find texture for moodles %s", moodleType)
+        end
     end
     levels = levels or 4
     
     local backgrounds = not positive and MoodleTemplate.Backgrounds.Negative or MoodleTemplate.Backgrounds.Positive
-    local translations = {}
+    local translations = table.newarray()
     
     local nameId = translationId or moodleType
     local descId = descIdentifier or nameId
