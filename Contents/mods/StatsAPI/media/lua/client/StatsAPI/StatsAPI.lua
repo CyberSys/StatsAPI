@@ -259,18 +259,21 @@ local moodleDesc = "Moodles_%s_desc_lvl%d"
 ---Adds a new moodle. The new moodle will not be added retroactively to existing players, so this should be used before gameplay starts.
 ---@param moodleType string Identifier for the moodle. Also used in determining the translation string for its names
 ---@param icon Texture|string Icon for the moodle.
----@param levels int|nil How many levels the moodle should have. (Default: 4)
----@param positive boolean|nil Whether the moodle is a positive moodle. (Changes the background sprite, defaults to false)
----@param translationId string|nil Identifier for the moodle's translations, if it is different to moodleType
----@param descIdentifier string|nil Identifier for the moodle's description translations, if it is different to moodleType *and* translationId
+---@param levels? integer How many levels the moodle should have. (Default: 4)
+---@param positive? boolean Whether the moodle is a positive moodle. (Changes the background sprite, defaults to false)
+---@param translationId? string Identifier for the moodle's translations, if it is different to moodleType
+---@param descIdentifier? string Identifier for the moodle's description translations, if it is different to moodleType *and* translationId
 StatsAPI.addMoodle = function(moodleType, icon, levels, positive, translationId, descIdentifier)
     if type(icon) == "string" then
         icon = getTexture(icon)
+        if not icon then
+            print("StatsAPI: Could not find texture for moodles %s", moodleType)
+        end
     end
     levels = levels or 4
     
     local backgrounds = not positive and MoodleTemplate.Backgrounds.Negative or MoodleTemplate.Backgrounds.Positive
-    local translations = {}
+    local translations = table.newarray()
     
     local nameId = translationId or moodleType
     local descId = descIdentifier or nameId
@@ -285,13 +288,13 @@ StatsAPI.addMoodle = function(moodleType, icon, levels, positive, translationId,
         end
     end
     
-    MoodleTemplate:new(moodleType, icon, backgrounds, translations)
+    MoodleTemplate.new(moodleType, icon, backgrounds, translations)
 end
 
 ---Sets the level of a player's moodle.
 ---@param player IsoPlayer The player whose moodle to change.
 ---@param moodleType string The type of moodle to change.
----@param level int The moodle level to set.
+---@param level integer The moodle level to set.
 StatsAPI.setMoodleLevel = function(player, moodleType, level)
     CharacterStats.get(player).luaMoodles.moodles[moodleType]:setLevel(level)
 end
@@ -313,9 +316,9 @@ end
 ---Sets the chevron (arrows) on a moodle. Generally used to indicate the trend in change in intensity of a moodle.
 ---@param player IsoPlayer The player whose moodle to change.
 ---@param moodleType string The type of moodle to change.
----@param numChevrons int The amount of chevrons to display.
----@param down boolean|nil Should the chevron point down? Defaults to no change (false if unset)
----@param positive boolean|nil Changes the colour of the chevron based on whether it's a positive or negative change. Defaults to no change (true if unset)
+---@param numChevrons integer The amount of chevrons to display.
+---@param down? boolean Should the chevron point down? Defaults to no change (false if unset)
+---@param positive? boolean Changes the colour of the chevron based on whether it's a positive or negative change. Defaults to no change (true if unset)
 StatsAPI.setMoodleChevron = function(player, moodleType, numChevrons, down, positive)
     local moodle = CharacterStats.get(player).luaMoodles.moodles[moodleType]
     moodle.chevronCount = numChevrons

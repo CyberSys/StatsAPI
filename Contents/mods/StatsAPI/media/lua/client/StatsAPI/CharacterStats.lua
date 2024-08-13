@@ -17,13 +17,14 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field stats StatsContainer The character's stats
 ---
 ---@field character IsoGameCharacter The character this StatsData belongs to
----@field playerNum int The character's playerNum
+---@field playerNum integer The character's playerNum
 ---@field bodyDamage BodyDamage The character's BodyDamage object
 ---@field javaStats Stats The character's Stats object
 ---@field moodles Moodles The character's Moodles object
 ---@field thermoregulator Thermoregulator The character's Thermoregulator object
 ---@field luaMoodles LuaMoodles The character's LuaMoodles object
----@field tickCount int How many times this character's stats have been updated
+---@field tickCount integer How many times this character's stats have been updated
+---@field private modData table Mod data table to store persistent data in
 ---
 ---@field maxWeightDelta number The character's carry weight multiplier from traits
 ---@field panicMultiplier number The character's panic multiplier from traits
@@ -43,9 +44,9 @@ local CarryWeight = require "StatsAPI/stats/CarryWeight"
 ---@field wellFed boolean Does the character have a food buff active?
 ---@field carryWeight number The character's current maximum carry weight
 ---@field temperature number The character's current temperature
----@field vehicle BaseVehicle|nil The character's current vehicle
+---@field vehicle BaseVehicle? The character's current vehicle
 ---@field reading boolean Is the character currently reading?
----@field overTimeEffects table<int, OverTimeEffect> The character's active OverTimeEffects
+---@field overTimeEffects OverTimeEffect[] The character's active OverTimeEffects
 local CharacterStats = {}
 CharacterStats.panicIncrease = 7
 CharacterStats.panicReduction = 0.06
@@ -57,7 +58,7 @@ CharacterStats.staticCarryMod = 0
 CharacterStats.tickCount = 0
 
 CharacterStats.persistentStats = {forceWakeUpTime = true, overTimeEffects = true}
----@param self CharacterStats
+
 ---@param key any
 CharacterStats.__index = function(self, key)
     if CharacterStats.persistentStats[key] then
@@ -66,7 +67,6 @@ CharacterStats.__index = function(self, key)
     return CharacterStats[key]
 end
 
----@param self CharacterStats
 ---@param key any
 ---@param value any
 CharacterStats.__newindex = function(self, key, value)
@@ -78,29 +78,28 @@ CharacterStats.__newindex = function(self, key, value)
 end
 
 ---@private
----@param self CharacterStats
 ---@param character IsoPlayer
 ---@return CharacterStats
-CharacterStats.new = function(self, character)
-    ---@type CharacterStats
+CharacterStats.new = function(character)
     local o = {}
-    setmetatable(o, self)
-    
+    setmetatable(o, CharacterStats)
+    ---@cast o CharacterStats
+
     o.character = character
     o.playerNum = character:getPlayerNum()
     o.bodyDamage = character:getBodyDamage()
     o.moodles = character:getMoodles()
     o.javaStats = character:getStats()
     o.thermoregulator = o.bodyDamage:getThermoregulator()
-    o.stats = StatsContainer:new(o.javaStats, o.bodyDamage)
-    
+    o.stats = StatsContainer.new(o.javaStats, o.bodyDamage)
+
     local modData = character:getModData()
     modData.StatsAPI = modData.StatsAPI or {}
     modData.StatsAPI.StatsData = modData.StatsAPI.StatsData or {}
     o.modData = modData.StatsAPI.StatsData
-    
+
     o.modData.overTimeEffects = o.modData.overTimeEffects or {}
-    
+
     return o
 end
 
@@ -115,13 +114,12 @@ CharacterStats.getIdleBoredom = Boredom.getIdleBoredom
 CharacterStats.updateSadness = Sadness.updateSadness
 CharacterStats.updateCarryWeight = CarryWeight.updateCarryWeight
 
----@param self CharacterStats
 CharacterStats.updateEndurance = function(self)
     if self.character:isUnlimitedEndurance() then
         self.stats.endurance = 1
         return
     end
-    
+
     if self.asleep then
         local enduranceMultiplier = 2
         if IsoPlayer.allPlayersAsleep() then
@@ -131,12 +129,10 @@ CharacterStats.updateEndurance = function(self)
     end
 end
 
----@param self CharacterStats
 CharacterStats.updateFitness = function(self)
     self.javaStats:setFitness(self.character:getPerkLevel(Perks.Fitness) / 5 - 1)
 end
 
----@param self CharacterStats
 CharacterStats.updateCache = function(self)
     self.asleep = self.character:isAsleep()
     self.vehicle = self.character:getVehicle()
@@ -145,7 +141,6 @@ CharacterStats.updateCache = function(self)
     self.temperature = self.bodyDamage:getTemperature()
 end
 
----@param self CharacterStats
 CharacterStats.refreshTraits = function(self)
     self.maxWeightDelta = CarryWeight.getMaxWeightDelta(self.character)
     self.panicMultiplier = Panic.getTraitMultiplier(self.character)
@@ -155,7 +150,6 @@ CharacterStats.refreshTraits = function(self)
     self.fatigueMultiplierAwake, self.fatigueMultiplierAsleep = Fatigue.getFatigueRates(self.character)
 end
 
----@param self CharacterStats
 CharacterStats.CalculateStats = function(self)
     self.stats:fromJava()
     
@@ -214,7 +208,7 @@ CharacterStats.moodleThresholds = {
     windchill = {5, 10, 15, 20},
     hyperthermia = {37.5, 39, 40, 41}
 }
----@param self CharacterStats
+
 CharacterStats.updateMoodles = function(self)
     -- TODO: ugh
     local stats = {stress = self.stats.stress + self.javaStats:getStressFromCigarettes(), foodeaten = self.bodyDamage:getHealthFromFoodTimer(), endurance = 1 - self.stats.endurance,
@@ -247,7 +241,6 @@ CharacterStats.updateMoodles = function(self)
     self:updateTemperatureMoodles()
 end
 
----@param self CharacterStats
 CharacterStats.updateTemperatureMoodles = function(self)
     local drunkenness = self.javaStats:getDrunkenness()
     local hypothermia = self.luaMoodles.moodles.hypothermia
@@ -281,7 +274,6 @@ CharacterStats.updateTemperatureMoodles = function(self)
     end
 end
 
----@param self CharacterStats
 CharacterStats.applyOverTimeEffects = function(self)
     for j = 1, #self.overTimeEffects do
         local effect = self.overTimeEffects[j]
@@ -295,10 +287,9 @@ CharacterStats.applyOverTimeEffects = function(self)
     end
 end
 
----@param self CharacterStats
 ---@param moodle string
----@return int
----@see LuaMoodles#getMoodleLevel
+---@return integer
+---@see LuaMoodles.getMoodleLevel
 CharacterStats.getMoodleLevel = function(self, moodle)
     return self.luaMoodles:getMoodleLevel(moodle)
 end
@@ -309,7 +300,7 @@ CharacterStats.CharacterStatsMap = {}
 ---@param character IsoGameCharacter
 ---@return CharacterStats
 CharacterStats.create = function(character)
-    local stats = CharacterStats:new(character)
+    local stats = CharacterStats.new(character)
     CharacterStats.CharacterStatsMap[character] = stats
     return stats
 end
@@ -319,14 +310,14 @@ end
 CharacterStats.getOrCreate = function(character)
     local stats = CharacterStats.CharacterStatsMap[character]
     if not stats then
-        stats = CharacterStats:new(character)
+        stats = CharacterStats.new(character)
         CharacterStats.CharacterStatsMap[character] = stats
     end
     return stats
 end
 
 ---@param character IsoGameCharacter
----@return CharacterStats|nil
+---@return CharacterStats
 CharacterStats.get = function(character)
     return CharacterStats.CharacterStatsMap[character]
 end
@@ -342,7 +333,7 @@ end
 
 Hook.CalculateStats.Add(CharacterStats.OnCalculateStats)
 
----@param playerIndex int
+---@param playerIndex integer
 ---@param player IsoPlayer
 CharacterStats.preparePlayer = function(playerIndex, player)
     if LuaMoodles.instanceMap[playerIndex] then

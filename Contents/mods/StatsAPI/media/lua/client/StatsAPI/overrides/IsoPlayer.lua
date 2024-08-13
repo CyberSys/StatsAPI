@@ -34,7 +34,7 @@ end
 -- TODO: hard overwrite :(
 ---@param self IsoPlayer
 ---@param moodleType MoodleType
----@return int
+---@return integer
 isoPlayer.getMoodleLevel = function(self, moodleType)
     return self:getMoodles():getMoodleLevel(moodleType)
 end

@@ -11,14 +11,14 @@ local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), get
 ---@field baseY number
 ---@field template MoodleTemplate
 ---@field texture Texture
----@field backgrounds table<Texture>
----@field level int
----@field renderIndex int
+---@field backgrounds Texture[]
+---@field level integer
 ---@field parent LuaMoodles
 ---@field oscillationLevel number
 ---@field chevronCount number
 ---@field chevronUp boolean
 ---@field chevronPositive boolean
+---@field private _showing boolean
 local LuaMoodle = ISUIElement:derive("LuaMoodle")
 LuaMoodle.oscillator = 0
 LuaMoodle.oscillatorStep = 0
@@ -26,51 +26,52 @@ LuaMoodle.oscillatorStep = 0
 LuaMoodle.colourNegative = {0.88235295, 0.15686275, 0.15686275, 1}
 LuaMoodle.colourPositive = {0.15686275, 0.88235295, 0.15686275, 1}
 
----@param self LuaMoodle
 ---@param x number
 ---@param y number
 ---@param template MoodleTemplate
 ---@param parent LuaMoodles
-LuaMoodle.new = function(self, x, y, template, parent)
+LuaMoodle.new = function(x, y, template, parent)
     local o = ISUIElement:new(x, y, template.texture:getWidth() * parent.scale, template.texture:getHeight() * parent.scale)
-    setmetatable(o, self)
-    
+
+    setmetatable(o, LuaMoodle)
+    ---@cast o LuaMoodle
+
     o.baseY = y
     o.template = template
     o.texture = template.texture
     o.backgrounds = template.backgrounds
     o.parent = parent
-    
+    o._showing = false
+
     o.level = 0
     o.chevronCount = 0
     o.chevronUp = true
     o.chevronPositive = true
-    
-    o.renderIndex = 1
+
     o.oscillationLevel = 0
-    
+
     return o
 end
 
----@param self LuaMoodle
 LuaMoodle.show = function(self)
+    if self._showing then return end
+    self._showing = true
     self:addToUIManager()
     self.parent:showMoodle(self)
 end
 
----@param self LuaMoodle
 LuaMoodle.hide = function(self)
+    if not self._showing then return end
+    self._showing = false
     self:removeFromUIManager()
     self.parent:hideMoodle(self)
 end
 
----@param self LuaMoodle
----@param level int
+---@param level integer
 LuaMoodle.setLevel = function(self, level)
     if level == self.level then return end
-    
-    local showing = self.level > 0
-    if not showing then
+
+    if not self._showing then
         if level > 0 then
             self:show()
         end
@@ -84,19 +85,16 @@ LuaMoodle.setLevel = function(self, level)
     self.level = level
 end
 
----@param self LuaMoodle
----@param renderIndex int
+---@param renderIndex integer
 LuaMoodle.setRenderIndex = function(self, renderIndex)
     self:setY(self.baseY + self.parent.spacing * self.parent.scale * (renderIndex - 1))
 end
 
----@param self LuaMoodle
 LuaMoodle.updateHeightWidth = function(self)
     self:setWidth(self.texture:getWidth() * self.parent.scale)
     self:setHeight(self.texture:getHeight() * self.parent.scale)
 end
 
----@param self LuaMoodle
 LuaMoodle.updateOscillationLevel = function(self)
     if self.oscillationLevel > 0 then
         self.oscillationLevel = self.oscillationLevel - self.oscillationLevel * 0.04 / Globals.FPSMultiplier
@@ -106,13 +104,12 @@ LuaMoodle.updateOscillationLevel = function(self)
     end
 end
 
----@param self LuaMoodle
 LuaMoodle.render = function(self)
     local x = LuaMoodle.oscillator * self.oscillationLevel * self.parent.scale
-    
+
     self:drawTextureScaledUniform(self.backgrounds[self.level] or self.backgrounds[1], x, 0, self.parent.scale, 1, 1, 1, 1)
     self:drawTextureScaledUniform(self.texture, x, 0, self.parent.scale, 1, 1, 1, 1)
-    
+
     if self.chevronCount > 0 then
         local tex = chevronTextures[self.chevronUp and "up" or "down"]
         local r, g, b, a = unpack(self.chevronPositive and LuaMoodle.colourPositive or LuaMoodle.colourNegative)
@@ -122,7 +119,7 @@ LuaMoodle.render = function(self)
             self:drawTextureScaledUniform(tex[2], x + 16 * self.parent.scale, y, self.parent.scale, a, r, g, b)
         end
     end
-    
+
     if self:isMouseOver() then
         local translation = self.template.text[self.level] or self.template.text[1]
         local name = translation.name
@@ -134,12 +131,10 @@ LuaMoodle.render = function(self)
     end
 end
 
----@param self LuaMoodle
 LuaMoodle.wiggle = function(self)
     self.oscillationLevel = 1
 end
 
----@param self LuaMoodle
 LuaMoodle.cleanup = function(self)
     self:removeFromUIManager()
     if self.javaObject then
