@@ -4,6 +4,7 @@ local Math = require "StatsAPI/lib/Math"
 local textManager = getTextManager()
 local FONT_HGT_SMALL = textManager:getFontHeight(UIFont.Small)
 
+---@type table<"up"|"down", [Texture, Texture]>
 local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), getTexture("media/ui/Moodle_chevron_up_border.png")},
                          down = {getTexture("media/ui/Moodle_chevron_down.png"), getTexture("media/ui/Moodle_chevron_down_border.png")}}
 
@@ -18,7 +19,6 @@ local chevronTextures = {up = {getTexture("media/ui/Moodle_chevron_up.png"), get
 ---@field chevronCount number
 ---@field chevronUp boolean
 ---@field chevronPositive boolean
----@field private _showing boolean
 local LuaMoodle = ISUIElement:derive("LuaMoodle")
 LuaMoodle.oscillator = 0
 LuaMoodle.oscillatorStep = 0
@@ -41,7 +41,6 @@ LuaMoodle.new = function(x, y, template, parent)
     o.texture = template.texture
     o.backgrounds = template.backgrounds
     o.parent = parent
-    o._showing = false
 
     o.level = 0
     o.chevronCount = 0
@@ -54,15 +53,13 @@ LuaMoodle.new = function(x, y, template, parent)
 end
 
 LuaMoodle.show = function(self)
-    if self._showing then return end
-    self._showing = true
+    -- HACK: i genuinely have no idea what is setting this to false
+    self:setVisible(true)
     self:addToUIManager()
     self.parent:showMoodle(self)
 end
 
 LuaMoodle.hide = function(self)
-    if not self._showing then return end
-    self._showing = false
     self:removeFromUIManager()
     self.parent:hideMoodle(self)
 end
@@ -71,7 +68,7 @@ end
 LuaMoodle.setLevel = function(self, level)
     if level == self.level then return end
 
-    if not self._showing then
+    if self.level <= 0 then
         if level > 0 then
             self:show()
         end
@@ -105,6 +102,7 @@ LuaMoodle.updateOscillationLevel = function(self)
 end
 
 LuaMoodle.render = function(self)
+    assert(self:isVisible(), "LuaMoodle is not visible")
     local x = LuaMoodle.oscillator * self.oscillationLevel * self.parent.scale
 
     self:drawTextureScaledUniform(self.backgrounds[self.level] or self.backgrounds[1], x, 0, self.parent.scale, 1, 1, 1, 1)
@@ -137,10 +135,6 @@ end
 
 LuaMoodle.cleanup = function(self)
     self:removeFromUIManager()
-    if self.javaObject then
-        self.javaObject:setTable(nil)
-        self.javaObject = nil
-    end
 end
 
 LuaMoodle.updateOscillator = function()
