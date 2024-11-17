@@ -91,8 +91,8 @@ LuaMoodle.setRenderIndex = function(self, renderIndex)
 end
 
 LuaMoodle.updateHeightWidth = function(self)
-    self:setWidth(self.texture:getWidth() * self.parent.scale)
-    self:setHeight(self.texture:getHeight() * self.parent.scale)
+    self:setWidth(self.backgrounds[1]:getWidth() * self.parent.scale)
+    self:setHeight(self.backgrounds[1]:getHeight() * self.parent.scale)
 end
 
 LuaMoodle.updateOscillationLevel = function(self)
