@@ -54,7 +54,15 @@ end
 
 LuaMoodle.show = function(self)
     -- HACK: i genuinely have no idea what is setting this to false
-    self:setVisible(true)
+    if not self:isVisible() then
+        print(string.format("StatsAPI: LuaMoodle %s is not visible (player %d)", self.template.type, self.parent.playerNum, self.level))
+        local data = "MOODLE DATA:"
+        for k,v in pairs(self) do
+            data = data .. string.format("\n%s : %s", tostring(k), tostring(v))
+        end
+        print(data)
+        self:setVisible(true)
+    end
     self:addToUIManager()
     self.parent:showMoodle(self)
 end
@@ -102,7 +110,6 @@ LuaMoodle.updateOscillationLevel = function(self)
 end
 
 LuaMoodle.render = function(self)
-    assert(self:isVisible(), "LuaMoodle is not visible")
     local x = LuaMoodle.oscillator * self.oscillationLevel * self.parent.scale
 
     self:drawTextureScaledUniform(self.backgrounds[self.level] or self.backgrounds[1], x, 0, self.parent.scale, 1, 1, 1, 1)
