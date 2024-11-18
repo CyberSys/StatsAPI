@@ -57,11 +57,11 @@ CharacterStats.timeUntilSleep = 0
 CharacterStats.staticCarryMod = 0
 CharacterStats.tickCount = 0
 
-CharacterStats.persistentStats = {forceWakeUpTime = true, overTimeEffects = true}
+CharacterStats._persistentFields = {forceWakeUpTime = true, overTimeEffects = true}
 
 ---@param key any
 CharacterStats.__index = function(self, key)
-    if CharacterStats.persistentStats[key] then
+    if CharacterStats._persistentFields[key] then
         return self.modData[key]
     end
     return CharacterStats[key]
@@ -70,7 +70,7 @@ end
 ---@param key any
 ---@param value any
 CharacterStats.__newindex = function(self, key, value)
-    if CharacterStats.persistentStats[key] then
+    if CharacterStats._persistentFields[key] then
         self.modData[key] = value
     else
         rawset(self, key, value)
